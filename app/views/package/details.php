@@ -33,7 +33,9 @@
 					<section class="card">
 						<img src="<?php echo BASE_URL; ?>admin/packageimages/<?php echo htmlentities(
 																					$data["package"]->PackageImage,
-																				); ?>" alt="<?php echo htmlentities($data["package"]->PackageName); ?>">
+																				); ?>"
+							onerror="this.onerror=null;this.src='<?php echo BASE_URL; ?>admin/packageimages/tour01.jpg';"
+							alt="<?php echo htmlentities($data["package"]->PackageName); ?>">
 						<h2><?php echo htmlentities($data["package"]->PackageName); ?></h2>
 						<p class="badge">#PKG-<?php echo htmlentities(
 													$data["package"]->PackageId,

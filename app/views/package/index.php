@@ -73,6 +73,7 @@
 								<div class="tilt">
 									<div class="img">
 										<img src="<?php echo BASE_URL; ?>admin/packageimages/<?php echo htmlentities($package->PackageImage); ?>"
+											onerror="this.onerror=null;this.src='<?php echo BASE_URL; ?>admin/packageimages/tour01.jpg';"
 											alt="<?php echo htmlentities($package->PackageName); ?>">
 									</div>
 								</div>
