@@ -1,0 +1,28 @@
+/* Simple Itinerary List - Matching Package Details Style */
+
+.itinerary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.itinerary-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    line-height: 1.6;
+}
+
+.itinerary-item:last-child {
+    border-bottom: none;
+}
+
+.itinerary-item strong {
+    color: #005A9C;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.itinerary-item span {
+    color: #333;
+}
