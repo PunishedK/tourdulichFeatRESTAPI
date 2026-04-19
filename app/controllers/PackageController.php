@@ -28,9 +28,18 @@ class PackageController extends Controller {
         $itineraryModel = $this->model('ItineraryModel');
         $itineraries = $itineraryModel->getByPackageId($id);
 
+        $reviewModel = $this->model('ReviewModel');
+        $reviewStats = $reviewModel ? $reviewModel->getStatsByPackageId((int) $id) : (object) ['avg_rating' => null, 'review_count' => 0];
+        $reviews = $reviewModel ? $reviewModel->getReviewsByPackageId((int) $id, 50) : [];
+        $loginEmail = isset($_SESSION['login']) && strlen($_SESSION['login']) > 0 ? $_SESSION['login'] : '';
+        $userHasReviewed = $loginEmail && $reviewModel ? $reviewModel->userHasReviewed((int) $id, $loginEmail) : false;
+
         $data = [
             'package' => $package,
             'itineraries' => $itineraries,
+            'reviewStats' => $reviewStats,
+            'reviews' => $reviews,
+            'userHasReviewed' => $userHasReviewed,
             'error' => $_SESSION['error'] ?? null,
             'msg' => $_SESSION['msg'] ?? null
         ];
@@ -38,6 +47,61 @@ class PackageController extends Controller {
 
 
         $this->view('package/details', $data);
+    }
+
+    public function submitReview($id = 0) {
+        $pid = (int) $id;
+        if ($pid <= 0) {
+            header('Location: ' . BASE_URL . 'package');
+            exit;
+        }
+
+        if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
+            $_SESSION['error'] = 'Vui lòng đăng nhập để gửi đánh giá.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        if (!isset($_POST['submit_review'])) {
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 0;
+        $note = isset($_POST['note']) ? trim((string) $_POST['note']) : '';
+
+        if ($rating < 1 || $rating > 5) {
+            $_SESSION['error'] = 'Vui lòng chọn số sao từ 1 đến 5.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        if (mb_strlen($note, 'UTF-8') > 1000) {
+            $_SESSION['error'] = 'Ghi chú đánh giá tối đa 1000 ký tự.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        $reviewModel = $this->model('ReviewModel');
+        if (!$reviewModel) {
+            $_SESSION['error'] = 'Không thể gửi đánh giá lúc này.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        if ($reviewModel->userHasReviewed($pid, $_SESSION['login'])) {
+            $_SESSION['error'] = 'Bạn đã đánh giá gói tour này rồi.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+
+        if ($reviewModel->addReview($pid, $_SESSION['login'], $rating, $note)) {
+            $_SESSION['msg'] = 'Cảm ơn bạn đã đánh giá tour.';
+        } else {
+            $_SESSION['error'] = 'Không thể lưu đánh giá. Vui lòng thử lại.';
+        }
+        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        exit;
     }
 
     public function book($id = 0) {

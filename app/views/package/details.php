@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/style.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/itinerary-carousel.css?v=14.0">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/wishlist-button.css?v=1.0">
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/tour-reviews.css?v=1.0">
 </head>
 
 <body>
@@ -57,6 +58,20 @@
 																		Helper::vi($data["package"]->TourDuration),
 																	); ?></strong></li>
 							<li><span>Giá</span><strong><?php echo Controller::formatVND($data["package"]->PackagePrice); ?></strong></li>
+							<li><span>Đánh giá</span><strong class="tour-rating-inline">
+								<?php if (!empty($data["reviewStats"]) && (int) $data["reviewStats"]->review_count > 0): ?>
+									<span class="tour-rating-inline__score"><?php echo htmlentities((string) $data["reviewStats"]->avg_rating); ?></span>/5
+									<span class="tour-rating-inline__stars" aria-hidden="true"><?php
+									$avg = (float) $data["reviewStats"]->avg_rating;
+									for ($si = 1; $si <= 5; $si++) {
+										echo $si <= round($avg) ? '<span class="star-on">★</span>' : '<span class="star-dim">★</span>';
+									}
+									?></span>
+									<span class="tour-rating-inline__count">(<?php echo (int) $data["reviewStats"]->review_count; ?> lượt)</span>
+								<?php else: ?>
+									<span class="muted">Chưa có đánh giá</span>
+								<?php endif; ?>
+							</strong></li>
 						</ul>
 						<p><?php echo htmlentities($data["package"]->PackageFetures); ?></p>
 					</section>
@@ -100,6 +115,70 @@
 						</div>
 					</section>
 				<?php endif; ?>
+
+				<section class="card tour-reviews" id="danh-gia">
+					<h3>Đánh giá từ khách hàng</h3>
+					<?php if (!empty($data["reviewStats"]) && (int) $data["reviewStats"]->review_count > 0): ?>
+						<div class="tour-reviews__hero">
+							<div class="tour-reviews__hero-score"><?php echo htmlentities((string) $data["reviewStats"]->avg_rating); ?></div>
+							<div class="tour-reviews__hero-meta">
+								<div class="tour-reviews__hero-stars" aria-hidden="true"><?php
+								$avgH = (float) $data["reviewStats"]->avg_rating;
+								for ($si = 1; $si <= 5; $si++) {
+									echo $si <= round($avgH) ? '<span class="star-on">★</span>' : '<span class="star-dim">★</span>';
+								}
+								?></div>
+								<p class="tour-reviews__hero-count"><?php echo (int) $data["reviewStats"]->review_count; ?> đánh giá (sao và ghi chú)</p>
+							</div>
+						</div>
+					<?php else: ?>
+						<p class="muted tour-reviews__empty">Chưa có đánh giá nào cho gói này. Hãy là người đầu tiên!</p>
+					<?php endif; ?>
+
+					<?php if (!empty($_SESSION["login"])): ?>
+						<?php if (empty($data["userHasReviewed"])): ?>
+							<form method="post" action="<?php echo BASE_URL; ?>package/submit-review/<?php echo (int) $data["package"]->PackageId; ?>" class="form-stack tour-reviews__form">
+								<h4>Gửi đánh giá của bạn</h4>
+								<div class="form-group">
+									<label for="review-rating">Số sao</label>
+									<select name="rating" id="review-rating" class="tour-reviews__select" required>
+										<?php for ($r = 5; $r >= 1; $r--): ?>
+											<option value="<?php echo $r; ?>"><?php echo $r; ?> sao</option>
+										<?php endfor; ?>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="review-note">Ghi chú đánh giá</label>
+									<textarea id="review-note" name="note" rows="3" maxlength="1000" placeholder="Chia sẻ trải nghiệm của bạn (tối đa 1000 ký tự)" required></textarea>
+								</div>
+								<button type="submit" name="submit_review" value="1" class="btn">Gửi đánh giá</button>
+							</form>
+						<?php else: ?>
+							<p class="tour-reviews__already"><i class="fas fa-check-circle"></i> Bạn đã gửi đánh giá cho gói tour này.</p>
+						<?php endif; ?>
+					<?php else: ?>
+						<p class="tour-reviews__login-hint muted">Đăng nhập để gửi đánh giá có sao và ghi chú.</p>
+					<?php endif; ?>
+
+					<?php if (!empty($data["reviews"]) && count($data["reviews"]) > 0): ?>
+						<ul class="tour-reviews__list">
+							<?php foreach ($data["reviews"] as $rev): ?>
+								<li class="tour-review-item">
+									<div class="tour-review-item__head">
+										<strong class="tour-review-item__name"><?php echo htmlentities($rev->FullName); ?></strong>
+										<span class="tour-review-item__date"><?php echo htmlentities(date('d/m/Y', strtotime($rev->RegDate))); ?></span>
+									</div>
+									<div class="tour-review-item__stars" aria-label="<?php echo (int) $rev->Rating; ?> trên 5 sao"><?php
+									for ($si = 1; $si <= 5; $si++) {
+										echo $si <= (int) $rev->Rating ? '<span class="star-on">★</span>' : '<span class="star-dim">★</span>';
+									}
+									?></div>
+									<p class="tour-review-item__note"><?php echo nl2br(htmlentities($rev->Note, ENT_QUOTES, 'UTF-8')); ?></p>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
+				</section>
 
 				<section class="card">
 					<h3>Thông tin chi tiết</h3>

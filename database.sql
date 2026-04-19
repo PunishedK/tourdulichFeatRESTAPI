@@ -15,6 +15,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- DROP TABLES
 -- ============================================
 DROP TABLE IF EXISTS `tblitinerary`;
+DROP TABLE IF EXISTS `tbltourreviews`;
 DROP TABLE IF EXISTS `tblwishlist`;
 DROP TABLE IF EXISTS `tblbooking`;
 DROP TABLE IF EXISTS `tblissues`;
@@ -130,6 +131,17 @@ CREATE TABLE `tblitinerary` (
   `CreatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+CREATE TABLE `tbltourreviews` (
+  `ReviewId` INT AUTO_INCREMENT PRIMARY KEY,
+  `PackageId` INT NOT NULL,
+  `UserEmail` VARCHAR(70) NOT NULL,
+  `Rating` TINYINT UNSIGNED NOT NULL,
+  `Note` VARCHAR(1000) NOT NULL DEFAULT '',
+  `RegDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `uniq_user_package` (`UserEmail`, `PackageId`),
+  KEY `idx_tourreviews_package` (`PackageId`)
+) ENGINE=InnoDB;
+
 -- ============================================
 -- FOREIGN KEYS
 -- ============================================
@@ -153,6 +165,14 @@ ON DELETE CASCADE;
 ALTER TABLE `tblitinerary`
 ADD CONSTRAINT `fk_itinerary_package` 
 FOREIGN KEY (`PackageId`) REFERENCES `tbltourpackages`(`PackageId`) 
+ON DELETE CASCADE;
+
+ALTER TABLE `tbltourreviews`
+ADD CONSTRAINT `fk_tourreviews_package`
+FOREIGN KEY (`PackageId`) REFERENCES `tbltourpackages`(`PackageId`)
+ON DELETE CASCADE,
+ADD CONSTRAINT `fk_tourreviews_user`
+FOREIGN KEY (`UserEmail`) REFERENCES `tblusers`(`EmailId`)
 ON DELETE CASCADE;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -280,3 +300,65 @@ INSERT INTO `tblwishlist` (`id`, `UserEmail`, `PackageId`) VALUES
 (518, 'user18@gmail.com', 218),
 (519, 'user19@gmail.com', 219),
 (520, 'user20@gmail.com', 220);
+
+INSERT INTO `tbltourreviews` (`PackageId`, `UserEmail`, `Rating`, `Note`) VALUES
+(201, 'user01@gmail.com', 5, 'Tour rất tuyệt, hướng dẫn viên nhiệt tình.'),
+(201, 'user02@gmail.com', 4, 'Dịch vụ ổn, khách sạn đúng mô tả.'),
+(201, 'user03@gmail.com', 5, 'Cảnh đẹp, lịch trình hợp lý.'),
+(202, 'user04@gmail.com', 3, 'Tôi sẽ quay lại lần nữa!'),
+(202, 'user05@gmail.com', 4, 'Giá hợp lý so với chất lượng.'),
+(202, 'user06@gmail.com', 5, 'Xe đưa đón đúng giờ, ăn uống ngon.'),
+(203, 'user07@gmail.com', 4, 'Một vài điểm chưa như mong đợi nhưng nhìn chung ổn.'),
+(203, 'user08@gmail.com', 3, 'Phù hợp gia đình, trẻ em vui lắm.'),
+(203, 'user09@gmail.com', 5, 'Thời tiết đẹp, chụp ảnh rất đã.'),
+(204, 'user10@gmail.com', 4, 'Hơi vội ở một số điểm nhưng vẫn đáng đi.'),
+(204, 'user11@gmail.com', 5, 'Đặt tour qua web rất tiện.'),
+(204, 'user12@gmail.com', 4, 'Nhóm đông nhưng vẫn được tổ chức tốt.'),
+(205, 'user13@gmail.com', 3, 'Ẩm thực địa phương rất ngon.'),
+(205, 'user14@gmail.com', 5, 'View đẹp, phòng sạch sẽ.'),
+(205, 'user15@gmail.com', 4, 'Chương trình văn hóa thú vị.'),
+(206, 'user16@gmail.com', 5, 'Biển trong xanh, tắm rất thích.'),
+(206, 'user17@gmail.com', 3, 'Resort sang, nhân viên chuyên nghiệp.'),
+(206, 'user18@gmail.com', 4, 'Đường đi hơi xa nhưng xứng đáng.'),
+(207, 'user19@gmail.com', 5, 'Chợ nổi rất đặc sắc.'),
+(207, 'user20@gmail.com', 4, 'Homestay ấm cúng, chủ nhà thân thiện.'),
+(207, 'user01@gmail.com', 5, 'Tour rất tuyệt, hướng dẫn viên nhiệt tình.'),
+(208, 'user02@gmail.com', 4, 'Dịch vụ ổn, khách sạn đúng mô tả.'),
+(208, 'user03@gmail.com', 5, 'Cảnh đẹp, lịch trình hợp lý.'),
+(208, 'user04@gmail.com', 3, 'Tôi sẽ quay lại lần nữa!'),
+(209, 'user05@gmail.com', 4, 'Giá hợp lý so với chất lượng.'),
+(209, 'user06@gmail.com', 5, 'Xe đưa đón đúng giờ, ăn uống ngon.'),
+(209, 'user07@gmail.com', 4, 'Một vài điểm chưa như mong đợi nhưng nhìn chung ổn.'),
+(210, 'user08@gmail.com', 3, 'Phù hợp gia đình, trẻ em vui lắm.'),
+(210, 'user09@gmail.com', 5, 'Thời tiết đẹp, chụp ảnh rất đã.'),
+(210, 'user10@gmail.com', 4, 'Hơi vội ở một số điểm nhưng vẫn đáng đi.'),
+(211, 'user11@gmail.com', 5, 'Đặt tour qua web rất tiện.'),
+(211, 'user12@gmail.com', 4, 'Nhóm đông nhưng vẫn được tổ chức tốt.'),
+(211, 'user13@gmail.com', 3, 'Ẩm thực địa phương rất ngon.'),
+(212, 'user14@gmail.com', 5, 'View đẹp, phòng sạch sẽ.'),
+(212, 'user15@gmail.com', 4, 'Chương trình văn hóa thú vị.'),
+(212, 'user16@gmail.com', 5, 'Biển trong xanh, tắm rất thích.'),
+(213, 'user17@gmail.com', 3, 'Resort sang, nhân viên chuyên nghiệp.'),
+(213, 'user18@gmail.com', 4, 'Đường đi hơi xa nhưng xứng đáng.'),
+(213, 'user19@gmail.com', 5, 'Chợ nổi rất đặc sắc.'),
+(214, 'user20@gmail.com', 4, 'Homestay ấm cúng, chủ nhà thân thiện.'),
+(214, 'user01@gmail.com', 5, 'Tour rất tuyệt, hướng dẫn viên nhiệt tình.'),
+(214, 'user02@gmail.com', 4, 'Dịch vụ ổn, khách sạn đúng mô tả.'),
+(215, 'user03@gmail.com', 5, 'Cảnh đẹp, lịch trình hợp lý.'),
+(215, 'user04@gmail.com', 3, 'Tôi sẽ quay lại lần nữa!'),
+(215, 'user05@gmail.com', 4, 'Giá hợp lý so với chất lượng.'),
+(216, 'user06@gmail.com', 5, 'Xe đưa đón đúng giờ, ăn uống ngon.'),
+(216, 'user07@gmail.com', 4, 'Một vài điểm chưa như mong đợi nhưng nhìn chung ổn.'),
+(216, 'user08@gmail.com', 3, 'Phù hợp gia đình, trẻ em vui lắm.'),
+(217, 'user09@gmail.com', 5, 'Thời tiết đẹp, chụp ảnh rất đã.'),
+(217, 'user10@gmail.com', 4, 'Hơi vội ở một số điểm nhưng vẫn đáng đi.'),
+(217, 'user11@gmail.com', 5, 'Đặt tour qua web rất tiện.'),
+(218, 'user12@gmail.com', 4, 'Nhóm đông nhưng vẫn được tổ chức tốt.'),
+(218, 'user13@gmail.com', 3, 'Ẩm thực địa phương rất ngon.'),
+(218, 'user14@gmail.com', 5, 'View đẹp, phòng sạch sẽ.'),
+(219, 'user15@gmail.com', 4, 'Chương trình văn hóa thú vị.'),
+(219, 'user16@gmail.com', 5, 'Biển trong xanh, tắm rất thích.'),
+(219, 'user17@gmail.com', 3, 'Resort sang, nhân viên chuyên nghiệp.'),
+(220, 'user18@gmail.com', 4, 'Đường đi hơi xa nhưng xứng đáng.'),
+(220, 'user19@gmail.com', 5, 'Chợ nổi rất đặc sắc.'),
+(220, 'user20@gmail.com', 4, 'Homestay ấm cúng, chủ nhà thân thiện.');
