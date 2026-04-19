@@ -62,6 +62,7 @@ class PackageController extends Controller {
 
     public function submitReview($id = 0) {
         $pid = (int) $id;
+        $reviewAnchorUrl = BASE_URL . 'package/details/' . $pid . '#danh-gia';
         if ($pid <= 0) {
             header('Location: ' . BASE_URL . 'package');
             exit;
@@ -69,12 +70,12 @@ class PackageController extends Controller {
 
         if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
             $_SESSION['error'] = 'Vui lòng đăng nhập để gửi đánh giá.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
         if (!isset($_POST['submit_review'])) {
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
@@ -83,26 +84,26 @@ class PackageController extends Controller {
 
         if ($rating < 1 || $rating > 5) {
             $_SESSION['error'] = 'Vui lòng chọn số sao từ 1 đến 5.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
         if (mb_strlen($note, 'UTF-8') > 1000) {
             $_SESSION['error'] = 'Ghi chú đánh giá tối đa 1000 ký tự.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
         $reviewModel = $this->model('ReviewModel');
         if (!$reviewModel) {
             $_SESSION['error'] = 'Không thể gửi đánh giá lúc này.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
         if ($reviewModel->userHasReviewed($pid, $_SESSION['login'])) {
             $_SESSION['error'] = 'Bạn đã đánh giá gói tour này rồi.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
 
@@ -111,41 +112,42 @@ class PackageController extends Controller {
         } else {
             $_SESSION['error'] = 'Không thể lưu đánh giá. Vui lòng thử lại.';
         }
-        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        header('Location: ' . $reviewAnchorUrl);
         exit;
     }
 
     public function updateReview($id = 0) {
         $pid = (int) $id;
+        $reviewAnchorUrl = BASE_URL . 'package/details/' . $pid . '#danh-gia';
         if ($pid <= 0) {
             header('Location: ' . BASE_URL . 'package');
             exit;
         }
         if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
             $_SESSION['error'] = 'Vui lòng đăng nhập để sửa đánh giá.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         if (!isset($_POST['update_review'])) {
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 0;
         $note = isset($_POST['note']) ? trim((string) $_POST['note']) : '';
         if ($rating < 1 || $rating > 5) {
             $_SESSION['error'] = 'Vui lòng chọn số sao từ 1 đến 5.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         if (mb_strlen($note, 'UTF-8') > 1000) {
             $_SESSION['error'] = 'Ghi chú đánh giá tối đa 1000 ký tự.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         $reviewModel = $this->model('ReviewModel');
         if (!$reviewModel || !$reviewModel->userHasReviewed($pid, $_SESSION['login'])) {
             $_SESSION['error'] = 'Không tìm thấy đánh giá của bạn để cập nhật.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         if ($reviewModel->updateReview($pid, $_SESSION['login'], $rating, $note)) {
@@ -153,23 +155,24 @@ class PackageController extends Controller {
         } else {
             $_SESSION['error'] = 'Không thể cập nhật đánh giá.';
         }
-        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        header('Location: ' . $reviewAnchorUrl);
         exit;
     }
 
     public function deleteReview($id = 0) {
         $pid = (int) $id;
+        $reviewAnchorUrl = BASE_URL . 'package/details/' . $pid . '#danh-gia';
         if ($pid <= 0) {
             header('Location: ' . BASE_URL . 'package');
             exit;
         }
         if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
             $_SESSION['error'] = 'Vui lòng đăng nhập để xóa đánh giá.';
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         if (!isset($_POST['delete_review'])) {
-            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            header('Location: ' . $reviewAnchorUrl);
             exit;
         }
         $reviewModel = $this->model('ReviewModel');
@@ -178,7 +181,7 @@ class PackageController extends Controller {
         } else {
             $_SESSION['error'] = 'Không thể xóa đánh giá.';
         }
-        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        header('Location: ' . $reviewAnchorUrl);
         exit;
     }
 
