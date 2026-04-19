@@ -180,6 +180,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ============================================
 -- SEED DATA
 -- ============================================
+-- Mat khau khach (tblusers) trong file nay: plain text "123456" (luu MD5 e10adc3949ba59abbe56e057f20f883e).
 
 INSERT INTO `tbladmin` VALUES
 (1, 'admin', 'f925916e2754e5e03f75dd58a5733251', '2017-05-13 11:18:49');
