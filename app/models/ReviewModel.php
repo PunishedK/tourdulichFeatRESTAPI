@@ -51,6 +51,19 @@ class ReviewModel extends Model {
         return (bool) $q->fetch(PDO::FETCH_OBJ);
     }
 
+    public function getUserReview($packageId, $email) {
+        $pid = (int) $packageId;
+        $sql = 'SELECT ReviewId, PackageId, UserEmail, Rating, Note, RegDate
+                FROM tbltourreviews
+                WHERE PackageId = :pid AND UserEmail = :email
+                LIMIT 1';
+        $q = $this->db->prepare($sql);
+        $q->bindParam(':pid', $pid, PDO::PARAM_INT);
+        $q->bindParam(':email', $email, PDO::PARAM_STR);
+        $q->execute();
+        return $q->fetch(PDO::FETCH_OBJ);
+    }
+
     public function addReview($packageId, $userEmail, $rating, $note) {
         if ($this->userHasReviewed($packageId, $userEmail)) {
             return false;
@@ -67,6 +80,33 @@ class ReviewModel extends Model {
         $q->bindParam(':email', $userEmail, PDO::PARAM_STR);
         $q->bindParam(':rating', $rating, PDO::PARAM_INT);
         $q->bindParam(':note', $note, PDO::PARAM_STR);
+        return $q->execute();
+    }
+
+    public function updateReview($packageId, $userEmail, $rating, $note) {
+        $pid = (int) $packageId;
+        $rating = (int) $rating;
+        if ($rating < 1 || $rating > 5) {
+            return false;
+        }
+        $note = mb_substr(trim($note), 0, 1000, 'UTF-8');
+        $sql = 'UPDATE tbltourreviews
+                SET Rating = :rating, Note = :note, RegDate = NOW()
+                WHERE PackageId = :pid AND UserEmail = :email';
+        $q = $this->db->prepare($sql);
+        $q->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $q->bindParam(':note', $note, PDO::PARAM_STR);
+        $q->bindParam(':pid', $pid, PDO::PARAM_INT);
+        $q->bindParam(':email', $userEmail, PDO::PARAM_STR);
+        return $q->execute();
+    }
+
+    public function deleteReview($packageId, $userEmail) {
+        $pid = (int) $packageId;
+        $sql = 'DELETE FROM tbltourreviews WHERE PackageId = :pid AND UserEmail = :email';
+        $q = $this->db->prepare($sql);
+        $q->bindParam(':pid', $pid, PDO::PARAM_INT);
+        $q->bindParam(':email', $userEmail, PDO::PARAM_STR);
         return $q->execute();
     }
 }

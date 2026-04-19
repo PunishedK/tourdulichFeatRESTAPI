@@ -155,7 +155,30 @@
 								<button type="submit" name="submit_review" value="1" class="btn">Gửi đánh giá</button>
 							</form>
 						<?php else: ?>
-							<p class="tour-reviews__already"><i class="fas fa-check-circle"></i> Bạn đã gửi đánh giá cho gói tour này.</p>
+							<form method="post" action="<?php echo BASE_URL; ?>package/update-review/<?php echo (int) $data["package"]->PackageId; ?>" class="form-stack tour-reviews__form">
+								<h4>Đánh giá của bạn</h4>
+								<p class="tour-reviews__already"><i class="fas fa-check-circle"></i> Bạn đã gửi đánh giá, có thể sửa hoặc xóa bên dưới.</p>
+								<div class="form-group">
+									<label class="star-rating__label">Số sao</label>
+									<div class="star-rating" role="radiogroup" aria-label="Chỉnh số sao">
+										<?php $myRating = !empty($data["userReview"]) ? (int) $data["userReview"]->Rating : 5; ?>
+										<?php for ($r = 5; $r >= 1; $r--): ?>
+											<input type="radio" name="rating" id="my-rating-<?php echo $r; ?>" value="<?php echo $r; ?>" <?php echo $myRating === $r ? 'checked' : ''; ?>>
+											<label for="my-rating-<?php echo $r; ?>" title="<?php echo $r; ?> sao" aria-label="<?php echo $r; ?> sao">★</label>
+										<?php endfor; ?>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="my-review-note">Ghi chú đánh giá</label>
+									<textarea id="my-review-note" name="note" rows="3" maxlength="1000" placeholder="Ghi chú (tuỳ chọn, tối đa 1000 ký tự)"><?php echo !empty($data["userReview"]) ? htmlentities($data["userReview"]->Note, ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
+								</div>
+								<div class="tour-reviews__actions">
+									<button type="submit" name="update_review" value="1" class="btn">Lưu thay đổi</button>
+								</div>
+							</form>
+							<form method="post" action="<?php echo BASE_URL; ?>package/delete-review/<?php echo (int) $data["package"]->PackageId; ?>" onsubmit="return confirm('Bạn chắc chắn muốn xóa đánh giá của mình?');">
+								<button type="submit" name="delete_review" value="1" class="btn btn-ghost btn-danger">Xóa đánh giá</button>
+							</form>
 						<?php endif; ?>
 					<?php else: ?>
 						<p class="tour-reviews__login-hint muted">Đăng nhập để gửi đánh giá có sao và ghi chú.</p>

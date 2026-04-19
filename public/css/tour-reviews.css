@@ -140,6 +140,21 @@
   margin-bottom: 1rem;
 }
 
+.tour-reviews__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-danger {
+  color: #b42318;
+  border-color: #f6d8d6;
+}
+
+.btn-danger:hover {
+  background: #fff1f0;
+}
+
 .tour-reviews__login-hint {
   margin-bottom: 1rem;
 }

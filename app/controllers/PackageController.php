@@ -31,6 +31,7 @@ class PackageController extends Controller {
         $reviewStats = (object) ['avg_rating' => null, 'review_count' => 0];
         $reviews = [];
         $userHasReviewed = false;
+        $userReview = null;
         if ($package) {
             $reviewModel = $this->model('ReviewModel');
             if ($reviewModel) {
@@ -39,6 +40,7 @@ class PackageController extends Controller {
                 $reviews = $reviewModel->getReviewsByPackageId($pid, 50);
                 $loginEmail = isset($_SESSION['login']) && strlen($_SESSION['login']) > 0 ? $_SESSION['login'] : '';
                 $userHasReviewed = $loginEmail ? $reviewModel->userHasReviewed($pid, $loginEmail) : false;
+                $userReview = $userHasReviewed ? $reviewModel->getUserReview($pid, $loginEmail) : null;
             }
         }
 
@@ -48,6 +50,7 @@ class PackageController extends Controller {
             'reviewStats' => $reviewStats,
             'reviews' => $reviews,
             'userHasReviewed' => $userHasReviewed,
+            'userReview' => $userReview,
             'error' => $_SESSION['error'] ?? null,
             'msg' => $_SESSION['msg'] ?? null
         ];
@@ -107,6 +110,73 @@ class PackageController extends Controller {
             $_SESSION['msg'] = 'Cảm ơn bạn đã đánh giá tour.';
         } else {
             $_SESSION['error'] = 'Không thể lưu đánh giá. Vui lòng thử lại.';
+        }
+        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        exit;
+    }
+
+    public function updateReview($id = 0) {
+        $pid = (int) $id;
+        if ($pid <= 0) {
+            header('Location: ' . BASE_URL . 'package');
+            exit;
+        }
+        if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
+            $_SESSION['error'] = 'Vui lòng đăng nhập để sửa đánh giá.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        if (!isset($_POST['update_review'])) {
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        $rating = isset($_POST['rating']) ? (int) $_POST['rating'] : 0;
+        $note = isset($_POST['note']) ? trim((string) $_POST['note']) : '';
+        if ($rating < 1 || $rating > 5) {
+            $_SESSION['error'] = 'Vui lòng chọn số sao từ 1 đến 5.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        if (mb_strlen($note, 'UTF-8') > 1000) {
+            $_SESSION['error'] = 'Ghi chú đánh giá tối đa 1000 ký tự.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        $reviewModel = $this->model('ReviewModel');
+        if (!$reviewModel || !$reviewModel->userHasReviewed($pid, $_SESSION['login'])) {
+            $_SESSION['error'] = 'Không tìm thấy đánh giá của bạn để cập nhật.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        if ($reviewModel->updateReview($pid, $_SESSION['login'], $rating, $note)) {
+            $_SESSION['msg'] = 'Đã cập nhật đánh giá của bạn.';
+        } else {
+            $_SESSION['error'] = 'Không thể cập nhật đánh giá.';
+        }
+        header('Location: ' . BASE_URL . 'package/details/' . $pid);
+        exit;
+    }
+
+    public function deleteReview($id = 0) {
+        $pid = (int) $id;
+        if ($pid <= 0) {
+            header('Location: ' . BASE_URL . 'package');
+            exit;
+        }
+        if (empty($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
+            $_SESSION['error'] = 'Vui lòng đăng nhập để xóa đánh giá.';
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        if (!isset($_POST['delete_review'])) {
+            header('Location: ' . BASE_URL . 'package/details/' . $pid);
+            exit;
+        }
+        $reviewModel = $this->model('ReviewModel');
+        if ($reviewModel && $reviewModel->deleteReview($pid, $_SESSION['login'])) {
+            $_SESSION['msg'] = 'Đã xóa đánh giá của bạn.';
+        } else {
+            $_SESSION['error'] = 'Không thể xóa đánh giá.';
         }
         header('Location: ' . BASE_URL . 'package/details/' . $pid);
         exit;
