@@ -93,6 +93,8 @@ CREATE TABLE `tblenquiry` (
   `MobileNumber` CHAR(10) NOT NULL,
   `Subject` VARCHAR(100) NOT NULL,
   `Description` MEDIUMTEXT NOT NULL,
+  `AdminReply` MEDIUMTEXT NULL,
+  `ReplyDate` TIMESTAMP NULL DEFAULT NULL,
   `PostingDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `Status` INT
 ) ENGINE=InnoDB;

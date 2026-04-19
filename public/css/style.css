@@ -801,3 +801,62 @@ section+section {
     align-items: flex-start;
   }
 }
+
+/* Hộp thư liên hệ */
+.enquiry-inbox-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.enquiry-thread {
+  text-align: left;
+}
+
+.enquiry-thread__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.enquiry-thread__msg,
+.enquiry-thread__reply {
+  margin-bottom: 1rem;
+}
+
+.enquiry-thread__label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.enquiry-thread__reply {
+  padding: 1rem 1.15rem;
+  border-radius: 0.75rem;
+  background: var(--brand-soft);
+  border: 1px solid rgba(0, 90, 156, 0.15);
+}
+
+.enquiry-thread__reply .enquiry-thread__label {
+  color: var(--brand-dark);
+}
+
+.enquiry-thread__pending {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.enquiry-card label {
+  color: var(--text);
+}

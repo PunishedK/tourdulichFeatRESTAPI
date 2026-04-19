@@ -655,3 +655,56 @@ button, input, select, textarea {
     margin-left: 0;
   }
 }
+
+/* Chi tiết liên hệ / trả lời */
+.back-link {
+  color: var(--brand-dark);
+  font-weight: 600;
+}
+
+.admin-enquiry-dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+}
+
+.admin-enquiry-dl dt {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-enquiry-dl dd {
+  margin: 0;
+}
+
+.admin-enquiry-box {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.15rem;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+
+.admin-enquiry-box--reply {
+  background: #ecfdf5;
+  border-color: rgba(5, 150, 105, 0.25);
+}
+
+.admin-enquiry-box h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.admin-enquiry-body {
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.table .cell-clip {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
