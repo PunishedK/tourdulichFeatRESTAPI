@@ -81,13 +81,54 @@
   font-size: 1.15rem;
 }
 
-.tour-reviews__select {
-  max-width: 220px;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: #fff;
+/* Input chọn sao (click sáng theo số sao) */
+.star-rating__label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.star-rating {
+  display: inline-flex;
+  flex-direction: row-reverse; /* để selector ~ tô từ trái qua */
+  gap: 0.15rem;
+  align-items: center;
+}
+
+.star-rating input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.star-rating label {
+  cursor: pointer;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #d6d6d6;
+  transition: transform 120ms ease, color 120ms ease;
+  user-select: none;
+}
+
+.star-rating label:hover {
+  transform: translateY(-1px);
+}
+
+/* hover: tô sáng từ sao đang hover trở về trái (do row-reverse) */
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #f5b301;
+}
+
+/* checked: tô sáng tới mức đã chọn */
+.star-rating input:checked ~ label {
+  color: #f5b301;
+}
+
+.star-rating input:focus-visible + label {
+  outline: 3px solid rgba(0, 90, 156, 0.35);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .tour-reviews__already {

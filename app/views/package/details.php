@@ -140,12 +140,13 @@
 							<form method="post" action="<?php echo BASE_URL; ?>package/submit-review/<?php echo (int) $data["package"]->PackageId; ?>" class="form-stack tour-reviews__form">
 								<h4>Gửi đánh giá của bạn</h4>
 								<div class="form-group">
-									<label for="review-rating">Số sao</label>
-									<select name="rating" id="review-rating" class="tour-reviews__select" required>
+									<label class="star-rating__label">Số sao</label>
+									<div class="star-rating" role="radiogroup" aria-label="Chọn số sao">
 										<?php for ($r = 5; $r >= 1; $r--): ?>
-											<option value="<?php echo $r; ?>"><?php echo $r; ?> sao</option>
+											<input type="radio" name="rating" id="rating-<?php echo $r; ?>" value="<?php echo $r; ?>" <?php echo $r === 5 ? 'required' : ''; ?>>
+											<label for="rating-<?php echo $r; ?>" title="<?php echo $r; ?> sao" aria-label="<?php echo $r; ?> sao">★</label>
 										<?php endfor; ?>
-									</select>
+									</div>
 								</div>
 								<div class="form-group">
 									<label for="review-note">Ghi chú đánh giá</label>
